@@ -90,7 +90,6 @@ def extract_test_frames():
             a = np.array(img)
             grayscale_image_array = cv2.cvtColor(a, cv2.COLOR_RGB2GRAY)
             feature=extract.extract_feature(grayscale_image_array)
-            test_arr[count][0]=math.ceil(count/3)
             test_list.append(feature)
         count=count+1
         
