@@ -16,7 +16,7 @@ import math
 #import pandas as pd
 from numpy.linalg import norm
 from pathlib import Path
-from PIL import Image
+#from PIL import Image
 #import csv
 ## import the handfeature extractor class
 
@@ -60,7 +60,8 @@ def extract_training_frames():
         split_list = new_name.split('.')
         count_png=int(split_list[0])
         if(count_png==(count+1)):
-            img = Image.open(item)
+            img = cv2.imread(item)
+            #img = Image.open(item)
             print(item.name)
             a = np.array(img)
             grayscale_image_array = cv2.cvtColor(a, cv2.COLOR_RGB2GRAY)
@@ -101,8 +102,9 @@ def extract_test_frames():
         split_list = new_name.split('.')
         count_png=int(split_list[0])
         if(count_png==(count+1)):
-            img = Image.open(item)
-            print(item.name)
+            img = cv2.imread(item)
+            #img = Image.open(item)
+            #print(item.name)
             a = np.array(img)
             grayscale_image_array = cv2.cvtColor(a, cv2.COLOR_RGB2GRAY)
             feature=extract.extract_feature(grayscale_image_array)
