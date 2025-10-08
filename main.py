@@ -4,38 +4,25 @@ Created on Thu Jan 28 00:44:25 2021
 
 @author: chakati
 """
-#from asyncio.windows_events import NULL
-import cv2
-import numpy as np
+#Imports
 import os
-#import tensorflow as tf
-#from sklearn.metrics.pairwise import cosine_similarity
-from handshape_feature_extractor import HandShapeFeatureExtractor as features
-import frameextractor as frames
+import cv2
 import math
-#import pandas as pd
-from numpy.linalg import norm
+import numpy as np
 from pathlib import Path
-#from PIL import Image
-#import csv
-## import the handfeature extractor class
+from numpy.linalg import norm
+import frameextractor as frames
+from handshape_feature_extractor import HandShapeFeatureExtractor as features
 
-# =============================================================================
-# Get the penultimate layer for trainig data
-# =============================================================================
-# your code goes here
-# Extract the middle frame of each gesture video
-rows, cols = (51, 2)
-train_arr = [[0]*cols]*rows
-test_arr = [[0]*cols]*rows
+#lists used throughout the code
 train_list=list()
 train_label=list()
 test_list=list()
 results_list=list()
 
-
+#Extract single frame from the traing videos and then extract hand gesture feature
 def extract_training_frames():
-    
+    #create Directory to hold 
     directory_name = "single_frames_train"
     try:
         os.mkdir(directory_name)
@@ -47,12 +34,14 @@ def extract_training_frames():
 
     train_directory = Path("traindata/")
     extract = features.get_instance()
-
+    
+    #extract the frames
     count=0
     for item in train_directory.iterdir():
         frames.frameExtractor(item,"single_frames_train/",count)
         count=count+1
 
+    #extract and label the features from each training video
     count=0
     photo_directory = Path("single_frames_train/")
     for item in photo_directory.iterdir():
@@ -61,8 +50,6 @@ def extract_training_frames():
         count_png=int(split_list[0])
         if(count_png==(count+1)):
             img = cv2.imread(item)
-            #img = Image.open(item)
-            print(item.name)
             a = np.array(img)
             grayscale_image_array = cv2.cvtColor(a, cv2.COLOR_RGB2GRAY)
             feature=extract.extract_feature(grayscale_image_array)
@@ -72,12 +59,9 @@ def extract_training_frames():
      
     return None
 
-# =============================================================================
-# Get the penultimate layer for test data
-# =============================================================================
-# your code goes here 
-# Extract the middle frame of each gesture video
+#Extract single frame from the test videos and then extract hand gesture feature
 def extract_test_frames():
+    #Create directory to hold testing frames
     directory_name = "single_frames_test"
     try:
         os.mkdir(directory_name)
@@ -87,14 +71,14 @@ def extract_test_frames():
     except Exception as e:
         print(f"An error occurred: {e}")
 
-    train_directory = Path("test/")
+    test_directory = Path("test/")
     extract = features.get_instance()
-
+    #extract the frames
     count=0
-    for item in train_directory.iterdir():
+    for item in test_directory.iterdir():
         frames.frameExtractor(item,"single_frames_test/",count)
         count=count+1
-
+    #extract the feature for each testing frame
     count=0
     photo_directory = Path("single_frames_test/")
     for item in photo_directory.iterdir():
@@ -103,8 +87,6 @@ def extract_test_frames():
         count_png=int(split_list[0])
         if(count_png==(count+1)):
             img = cv2.imread(item)
-            #img = Image.open(item)
-            #print(item.name)
             a = np.array(img)
             grayscale_image_array = cv2.cvtColor(a, cv2.COLOR_RGB2GRAY)
             feature=extract.extract_feature(grayscale_image_array)
@@ -117,9 +99,7 @@ def extract_test_frames():
 
     return None
 
-# =============================================================================
-# Recognize the gesture (use cosine similarity for comparing the vectors)
-# =============================================================================
+#Use cosine similarity to assign the label o fthe highes tvalue to the testing features
 def identify_gestures():
     
     for i in range(51):
@@ -137,6 +117,7 @@ def identify_gestures():
     return None
 
 def clean_results():
+    #Correct Labeling issues
     for i in range(51):
         value=results_list[i]
         match value:
@@ -174,24 +155,17 @@ def clean_results():
                 results_list[i]=9
             case 16:
                 results_list[i]=16
-    #for i in results_list:
-        #print(type(i))
-
-    # Write to a CSV file
+    
+    #Convert list to numpy array
     numpy_results = np.array(results_list)
 
+    #write the results to Results.csv
     with open('Results.csv', 'w') as results_file:
-        NEWLINE_SIZE_IN_BYTES = 2 # 2 on Windows?
+        NEWLINE_SIZE_IN_BYTES = 2
         np.savetxt(results_file, numpy_results, delimiter=",", fmt='%i')
-        results_file.seek(0, os.SEEK_END) # Go to the end of the file.
-        # Go backwards one byte from the end of the file.
+        results_file.seek(0, os.SEEK_END) 
         results_file.seek(results_file.tell() - NEWLINE_SIZE_IN_BYTES, os.SEEK_SET)
-        results_file.truncate() # Truncate the file to this point.
-    
-        
-    #print(len(numpy_results))
-    #np.savetxt('Results.csv', numpy_results, delimiter=",", fmt='%i')
-
+        results_file.truncate()
     return None
 
 
