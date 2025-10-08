@@ -4,20 +4,20 @@ Created on Thu Jan 28 00:44:25 2021
 
 @author: chakati
 """
-from asyncio.windows_events import NULL
+#from asyncio.windows_events import NULL
 import cv2
 import numpy as np
 import os
-import tensorflow as tf
-from sklearn.metrics.pairwise import cosine_similarity
+#import tensorflow as tf
+#from sklearn.metrics.pairwise import cosine_similarity
 from handshape_feature_extractor import HandShapeFeatureExtractor as features
 import frameextractor as frames
 import math
-import pandas as pd
+#import pandas as pd
 from numpy.linalg import norm
 from pathlib import Path
 from PIL import Image
-import csv
+#import csv
 ## import the handfeature extractor class
 
 # =============================================================================
